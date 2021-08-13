@@ -50,6 +50,11 @@ const App = () => {
 
   const onInsert = useCallback(
     (newContact) => {
+      if (!newContact.name) {
+        alert("이름은 필수 입력사항 입니다.");
+        return;
+      }
+
       newContact = {
         id: nextId.current++,
         img: "http://placeimg.com/100/100/any",
@@ -61,6 +66,51 @@ const App = () => {
       setRightStatus(0);
     },
     [contacts]
+  );
+
+  const onRemove = useCallback(
+    (id) => {
+      const newContacts = contacts.filter((contact) => contact.id !== id);
+      setContacts(newContacts);
+      alert("삭제되었습니다.");
+      setRightStatus(0);
+      setSelectedContact(null);
+    },
+    [contacts]
+  );
+
+  const onToggle = useCallback(
+    (modifyContact) => {
+      if (!modifyContact.name) {
+        alert("이름은 필수 입력사항 입니다.");
+        return;
+      }
+
+      const newContact = {
+        id: selectedContact.id,
+        img: selectedContact.img,
+        name: modifyContact.name,
+        birth: modifyContact.birth,
+        etc: modifyContact.etc,
+      };
+
+      const newContacts = contacts.map((contact) =>
+        contact.id === newContact.id
+          ? {
+              ...contact,
+              name: newContact.name,
+              birth: newContact.birth,
+              etc: newContact.etc,
+            }
+          : contact
+      );
+
+      setSelectedContact(newContact);
+      setContacts(newContacts);
+      alert("수정되었습니다.");
+      setRightStatus(0);
+    },
+    [selectedContact, contacts]
   );
 
   return (
@@ -78,6 +128,8 @@ const App = () => {
             rightStatus={rightStatus}
             setRightStatus={setRightStatus}
             onInsert={onInsert}
+            onRemove={onRemove}
+            onToggle={onToggle}
           />
         </div>
       </div>
